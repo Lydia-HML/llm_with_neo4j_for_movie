@@ -8,16 +8,26 @@ import requests, os
 
 
 def setup_vector_db():
-    output_dir = "dataset"
+    # Setting the current file path
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(base_dir, "dataset")
     os.makedirs(output_dir, exist_ok=True)
-    os.chdir(output_dir)
-    url = 'https://FlagTech.github.io/F4763/movie_reviews.csv'
 
-    with open('movie.csv', 'wb') as f:
+
+    # Download csv file
+    url = 'https://FlagTech.github.io/F4763/movie_reviews.csv'
+    file_path = os.path.join(output_dir, 'movie_reviews.csv')
+
+    print ("test")
+    print(file_path)
+
+    with open(file_path, 'wb') as f:
         f.write(requests.get(url).content)
 
-    loader = CSVLoader('./movie.csv')
+    #loader = CSVLoader(file_path)
+    loader = CSVLoader(file_path=file_path, encoding="utf-8", csv_args={"delimiter": ","})
     docs = loader.load()
+
     embeddings = OpenAIEmbeddings(model="text-embedding-3-small",
                                   api_key=OPENAI_API_KEY)
 
